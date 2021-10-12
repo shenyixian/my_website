@@ -1,0 +1,42 @@
+---
+categories:
+- ""
+- ""
+date: "2017-10-31T22:26:09-05:00"
+description: 
+draft: false
+keywords: ""
+slug: aboutme
+title: About Me
+image: pic10.jpg
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+
+#### About Me
+Hi, my name is Liam Cheung! I grew up in Singapore and then I moved to Sydney, Australia.  
+I settled in Melbourne, a city known for its coffee and cultural references.  
+Before LBS, I studied Accounting and Finance at **Melbourne University**. I am a professional Viola
+player, and I was lucky enough to have survived the Christchurch earthquake in New Zealand back in
+2011.  
+I was an apprentice at **Adelaide Symphony Orchestra**, where I was promoted to guest Violinist
+afterwards.  
+I co-founded the Go Society at University of Sydney and I have tutored many students to not only
+learn, but also enjoy playing Viola.  
+
+#### Professional Experience
+I have interned at an asset management company where I covered SaaS and dairy companies. I then
+interned at PE and IB advisory firms covering Real Estate, Media and Industrials related transactions.  
+
+#### Why Am I Here:
+Whilst I found traditional tools such as Excel to be handy, I did realise that I needed something that
+is designed to handle a huge amount of data efficiently. Given the competitive nature of the
+industry, R and other data analytics platforms are vital for me to gain an extra edge in my future
+career in making sound investments.  
+I aim to commit myself to a career in finance and I believe R and other programming languages are
+exceptionally powerful to analyse data. They are platforms which many professionals are using in
+the industry and they are essential in tomorrow’s workplace to be a successful investor.

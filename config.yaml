@@ -1,0 +1,109 @@
+baseURL: https://liamcheung.netlify.app/
+languageCode: en-us
+title: Portfolio website for Liam Cheung
+theme: forty
+googleAnalytics: ''
+disqusShortname: ''
+params:
+  banner:
+    buttonText: Get Started
+    subtitle: |-
+      Hi, my name is Liam Cheung, a MFA2022 student at LBS.
+    title: Liam Cheung
+  blog: {}
+  contact:
+    address:
+      - city: London
+        country: United Kingdom
+        street: Siddons Lane
+        title: Address
+    buttonClear: Clear
+    buttonSend: Send message
+    email:
+      - email: lcheung.mfa2022@london.edu
+        title: Email
+    enable: yes
+    phone:
+      - phone: (+44) 7908569599
+        title: Phone
+  custom_css: []
+  custom_js: []
+  description: Your description
+  error404:
+    heading: Page couldn't be found
+    text: Please visit [this page](/)
+  favicon: favicon.ico
+  footer:
+    copyright: Liam Cheung
+    enable: yes
+    quicklinks:
+      - alt: HTML5 UP
+        text: 'Design: '
+        url: https://www.html5up.net
+    social:
+      - icon: fa-twitter
+        label: Twitter
+        url: https://www.twitter.com
+      - icon: fa-facebook
+        label: Facebook
+        url: https://www.facebook.com
+      - icon: fa-instagram
+        label: Instagram
+        url: https://www.instagram.com
+      - icon: fa-github
+        label: GitHub
+        url: https://github.com/LiamCheung0128
+      - icon: fa-linkedin
+        label: LinkedIn
+        url: https://www.linkedin.com/
+  image: ''
+  name: Your name
+  navigation:
+    button1:
+      - name: Get Started
+        url: blogs
+    button2:
+      - name: Log In
+        url: '#'
+    links:
+      - name: Home
+        url: '#'
+      - name: About Me
+        url: blogs/aboutme
+      - name: Pre-program Assignment
+        url: blogs/proj1
+    menu: Menu
+    subtitle: 
+    title: Home
+  tiles:
+    enable: yes
+    showcase:
+      - image: Viola.jfif
+        subtitle: 
+        title: About Me
+        url: blogs/aboutme
+        
+      - image: project1.png
+        subtitle: 
+        title: Epidemic Simulation
+        url: blogs/proj1
+        
+      - image: project2.png
+        subtitle: 
+        title: Youth Risk Behavior Surveillance
+        url: blogs/proj2
+        
+      - image: project3.png
+        subtitle: 
+        title: Analysis of movies- IMDB dataset
+        url: blogs/proj3
+        
+      - image: project4.png
+        subtitle: 
+        title: Analysis of GDP components
+        url: blogs/proj4
+        
+      - image: contactme.jfif
+        subtitle: 
+        title: Contact Me
+        url: blogs/contactme
