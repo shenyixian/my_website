@@ -1,0 +1,405 @@
+<!DOCTYPE HTML>
+<html>
+
+    <head>
+	<meta charset="utf-8" />
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+	<meta name="description" content="Your description">
+	<meta name="author" content="Your name">
+	<meta name="generator" content="Hugo 0.88.1" />
+	<title>Epidemic Simulation &middot; Portfolio website for Liam Cheung</title>
+	<!-- Stylesheets -->
+	
+	<link rel="stylesheet" href="https://liamcheung.netlify.app/css/main.css"/>
+	
+	
+
+	
+
+	<!-- Custom Fonts -->
+	<link href="https://liamcheung.netlify.app/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+
+	
+	<link rel="shortcut icon" type="image/x-icon" href="https://liamcheung.netlify.app/favicon.ico">
+	<link rel="icon" type="image/x-icon" href="https://liamcheung.netlify.app/favicon.ico">
+	
+
+	<!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+	<!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+	<!--[if lt IE 9]>
+	<script src="js/ie/html5shiv.js"></script>
+	<script src="js/ie/html5shiv.jsrespond.min.js"></script>
+	<![endif]-->
+</head>
+
+    <body>
+
+    <!-- Wrapper -->
+        <div id="wrapper">
+
+            <!-- Header -->
+    <header id="header" class="alt">
+        <a href="https://liamcheung.netlify.app/" class="logo"><strong>Home</strong> <span></span></a>
+        <nav>
+            <a href="#menu">Menu</a>
+        </nav>
+    </header>
+
+<!-- Menu -->
+    <nav id="menu">
+        <ul class="links">
+            
+                <li><a href="https://liamcheung.netlify.app/">Home</a></li>
+            
+                <li><a href="https://liamcheung.netlify.app/blogs/aboutme">About Me</a></li>
+            
+                <li><a href="https://liamcheung.netlify.app/blogs/proj1">Pre-program Assignment</a></li>
+            
+
+        </ul>
+        <ul class="actions vertical">
+            
+                <li><a href="https://liamcheung.netlify.app/blogs" class="button special fit">Get Started</a></li>
+            
+            
+                <li><a href="https://liamcheung.netlify.app/" class="button fit">Log In</a></li>
+            
+        </ul>
+    </nav>
+
+        <!-- Main -->
+            <div id="main" class="alt">
+
+                
+                    <section id="one">
+                        <div class="inner">
+                            <header class="major">
+                                <h1>Epidemic Simulation</h1>
+                            </header>
+                            
+                            
+<script src="Epidemic Simulation_files/header-attrs/header-attrs.js"></script>
+
+
+<p>Simple code to simulate COVID-19 infection in the society.</p>
+<p>Eliminate the exponential notation of the integer.</p>
+<pre class="r"><code>options(scipen = 10)</code></pre>
+<p>Number of citizens</p>
+<pre class="r"><code>N_population &lt;- 1000</code></pre>
+<p>Number of initial positive cases</p>
+<pre class="r"><code>N_init &lt;- 2</code></pre>
+<p>Death rate and infection rate</p>
+<pre class="r"><code>death_rate &lt;- 0.002
+infection_rate &lt;- 0.3</code></pre>
+<p>Number of days to recover</p>
+<pre class="r"><code>n_recover &lt;- 10</code></pre>
+<p>Constants (State of health)</p>
+<pre class="r"><code>healthy &lt;- 0
+infected &lt;- 1
+dead &lt;- 2</code></pre>
+<p>Number of people encountered by the infected person in one day.(A number randomly selected from 0 to N_encountered)</p>
+<pre class="r"><code>N_encountered &lt;- 20</code></pre>
+<p>Immunity coefficient: A probability of being infected for immune person is the infection rate multiplied by the immunity coefficient.</p>
+<pre class="r"><code>immunity_coef &lt;- 0.3</code></pre>
+<pre class="r"><code>sim &lt;- function(death_rate=0.002, infection_rate=0.3, n_recover=10, N_encountered=20){
+  # Construct one r data frame storing id, state, duration, immunity.
+  id &lt;- seq(1,N_population,1)
+  state &lt;- rep(0,N_population)
+  duration &lt;- rep(0,N_population)
+  immunity &lt;- rep(1,N_population)
+  data &lt;- data.frame(id, state, duration, immunity)
+  # Initialization
+  id_init &lt;- ceiling(runif(N_init,min=0,max=N_population))
+  data[id_init,]$state &lt;- infected
+  # vectors storing number of infected person and deaths
+  N_Infected &lt;- c()
+  N_New_Infected &lt;- c()
+  N_Death &lt;- c()
+  N_New_Death &lt;- c()
+  N_Immunity &lt;- c()
+  N_New_Immunity &lt;- c()
+  for(i in 1:300){
+    # calculate number of infected person and deaths
+    n_infected &lt;- sum(data$state == infected)
+    n_death &lt;- sum(data$state == dead)
+    n_immunity &lt;- sum(data$immunity == immunity_coef)
+    
+    # update duration
+    data[data$state == infected,3] = data[data$state == infected,3] + 1
+    
+    # update immunity
+    # data[data$state == infected,4] = immunity_coef
+    
+    # update death
+    death_id &lt;- runif(n_infected,0,1) &lt; death_rate
+    n_new_death &lt;- sum(death_id)
+    data[data$state == infected,][death_id,2] &lt;- dead
+    #print(death_id)
+    #data[death_id,2] &lt;- dead
+    
+    # infect new citizens
+    N_meet &lt;- floor(runif(1,0,N_encountered*n_infected))
+    meet_id &lt;- unique(ceiling(runif(N_meet,min=0,max=N_population)))
+    # remove the dead
+    meet_id &lt;- meet_id[data[meet_id,2] != dead]
+    # remove the currently infected
+    meet_id &lt;- meet_id[data[meet_id,2] != infected]
+    # people with immunity
+    meet_id_1 &lt;- meet_id[data[meet_id,4] == immunity_coef]
+    infected_id_1 &lt;- meet_id[runif(length(meet_id_1),0,1) &lt; infection_rate * immunity_coef]
+    # people without immunity
+    meet_id_2 &lt;- meet_id[data[meet_id,4] == 1]
+    infected_id_2 &lt;- meet_id[runif(length(meet_id_2),0,1) &lt; infection_rate]
+    # total
+    infected_id &lt;- c(infected_id_1,infected_id_2)
+    n_new_infected &lt;- length(infected_id)
+    
+    # update new infected citizens
+    data[infected_id,2] &lt;- infected
+    
+    # patients recovery
+    n_new_immunity &lt;- nrow(data[data$duration &gt;= n_recover,])
+    data[data$duration &gt;= n_recover,2] &lt;- healthy
+    data[data$duration &gt;= n_recover,4] &lt;- immunity_coef
+    data[data$duration &gt;= n_recover,3] &lt;- 0
+    
+    # display information
+    # print(sprintf(fmt = &quot;Day: %3d; Total Infections: %6d; Toatl Deaths: %6d; Total Recovered:%6d; New Infections: %5d; New Deaths: %5d; New Recovered: %5d&quot;, i, n_infected, n_death, n_immunity, n_new_infected, n_new_death, n_new_immunity))
+    
+    # Stopping Criterion
+    # if(n_infected == 0 | n_death == N_population){
+    #   print(&quot;Stopping criterion reached.&quot;)
+    #   break
+    # }
+    
+    # Append number of infected, death, and immunity
+    N_Infected &lt;- append(N_Infected,n_infected)
+    N_Death &lt;- append(N_Death,n_death)
+    N_Immunity &lt;- append(N_Immunity,n_immunity)
+    
+    N_New_Infected &lt;- append(N_New_Infected, n_new_infected)
+    N_New_Death &lt;- append(N_New_Death, n_new_death)
+    N_New_Immunity &lt;- append(N_New_Immunity, n_new_immunity)
+    
+  }
+  days &lt;- seq(1,length(N_Infected))
+  d &lt;- data.frame(days, N_Infected, N_Death, N_Immunity, N_New_Infected, N_New_Death, N_New_Immunity)
+  return(d)
+}</code></pre>
+<p>The first simulation: Death rate is 0.2%, infection rate is 30%,<br />
+number of days to recover is 10, number of people contacted in one day is 20</p>
+<pre class="r"><code>d1 &lt;- sim(death_rate=0.002, infection_rate=0.3, n_recover=10, N_encountered=20)</code></pre>
+<p>The second simulation: Death rate is 3%, infection rate is 30%,<br />
+number of days to recover is 10, number of people contacted in one day is 20</p>
+<pre class="r"><code>d2 &lt;- sim(death_rate=0.03, infection_rate=0.3, n_recover=10, N_encountered=20)</code></pre>
+<p>The third simulation: Death rate is 0.2%, infection rate is 5%,<br />
+number of days to recover is 10, number of people contacted in one day is 20</p>
+<pre class="r"><code>d3 &lt;- sim(death_rate=0.002, infection_rate=0.05, n_recover=10, N_encountered=20)</code></pre>
+<p>The fourth simulation: Death rate is 0.2%, infection rate is 30%,<br />
+number of days to recover is 20, number of people contacted in one day is 20</p>
+<pre class="r"><code>d4 &lt;- sim(death_rate=0.002, infection_rate=0.3, n_recover=20, N_encountered=20)</code></pre>
+<p>The fifth simulation: Death rate is 0.2%, infection rate is 30%,<br />
+number of days to recover is 10, number of people contacted in one day is 2</p>
+<pre class="r"><code>d5 &lt;- sim(death_rate=0.002, infection_rate=0.3, n_recover=10, N_encountered=2)</code></pre>
+<p>Take a glance at the first several lines of the result data frame</p>
+<pre class="r"><code>d1[1:30,]</code></pre>
+<pre><code>##    days N_Infected N_Death N_Immunity N_New_Infected N_New_Death N_New_Immunity
+## 1     1          2       0          0              0           0              0
+## 2     2          2       0          0              7           0              0
+## 3     3          9       0          0             30           0              0
+## 4     4         39       0          0              8           0              0
+## 5     5         47       0          0            142           0              0
+## 6     6        189       0          0            123           0              0
+## 7     7        312       0          0            205           0              0
+## 8     8        517       0          0            127           0              0
+## 9     9        644       0          0             89           2              0
+## 10   10        731       2          0             92           0              2
+## 11   11        821       2          2             61           2              0
+## 12   12        880       4          2             30           2              7
+## 13   13        901       6          9             39           3             30
+## 14   14        907       9         39             28           1              8
+## 15   15        925      10         47             22           0            140
+## 16   16        807      10        187            107           1            120
+## 17   17        789      10        307             86           0            203
+## 18   18        665      10        510             69           1            127
+## 19   19        603      11        637             88           2             88
+## 20   20        597      12        725            113           2             91
+## 21   21        610      14        816            264           1             59
+## 22   22        790      15        875            113           1             30
+## 23   23        862      16        905             13           4             38
+## 24   24        833      20        942             13           1             26
+## 25   25        819      21        956             15           1             22
+## 26   26        811      22        965             21           2            100
+## 27   27        730      24        976             28           2             78
+## 28   28        678      26        979             33           0             65
+## 29   29        646      26        981             25           3             82
+## 30   30        586      29        982             35           1            104</code></pre>
+<p>A function used to combine many plots</p>
+<pre class="r"><code>multiplot &lt;- function(..., plotlist=NULL, file, cols=1, layout=NULL) {
+  library(grid)
+  plots &lt;- c(list(...), plotlist)
+  numPlots = length(plots)
+  if (is.null(layout)) {
+    layout &lt;- matrix(seq(1, cols * ceiling(numPlots/cols)),
+                     ncol = cols, nrow = ceiling(numPlots/cols))
+  }
+  if (numPlots==1) {
+    print(plots[[1]])
+    
+  } else {
+    grid.newpage()
+    pushViewport(viewport(layout = grid.layout(nrow(layout), ncol(layout))))
+    for (i in 1:numPlots) {
+      matchidx &lt;- as.data.frame(which(layout == i, arr.ind = TRUE))
+      print(plots[[i]], vp = viewport(layout.pos.row = matchidx$row,
+                                      layout.pos.col = matchidx$col))
+    }
+  }
+}</code></pre>
+<p>Plot the results of five simulations.</p>
+<pre class="r"><code>p1 &lt;- ggplot(d1, aes(x=days, y=N_Infected)) + 
+  geom_line(aes(y=N_Infected, color = &quot;Normal&quot;)) + 
+  geom_line(aes(y=d2$N_Infected, color = &quot;High Death Rate&quot;)) +
+  geom_line(aes(y=d3$N_Infected, color = &quot;Low Infection Rate&quot;)) +
+  geom_line(aes(y=d4$N_Infected, color = &quot;Longer Recovery Days&quot;)) +
+  geom_line(aes(y=d5$N_Infected, color = &quot;Low Contact Numbers&quot;)) +
+  scale_color_manual(name = &quot;Conditions&quot;, 
+                     values=c(&quot;Normal&quot; = &quot;#FF6600&quot;, 
+                              &quot;High Death Rate&quot; = &quot;#999900&quot;, 
+                              &quot;Low Infection Rate&quot; = &quot;#33CC33&quot;,
+                              &quot;Longer Recovery Days&quot; = &quot;#3399FF&quot;, 
+                              &quot;Low Contact Numbers&quot; = &quot;#FF33CC&quot;)) +
+  ggtitle(&quot;Total Infections&quot;)
+
+p2 &lt;- ggplot(d1, aes(x=days, y=N_Death)) + 
+  geom_line(aes(y=N_Death, color = &quot;Normal&quot;)) + 
+  geom_line(aes(y=d2$N_Death, color = &quot;High Death Rate&quot;)) +
+  geom_line(aes(y=d3$N_Death, color = &quot;Low Infection Rate&quot;)) +
+  geom_line(aes(y=d4$N_Death, color = &quot;Longer Recovery Days&quot;)) +
+  geom_line(aes(y=d5$N_Death, color = &quot;Low Contact Numbers&quot;)) +
+  scale_color_manual(name = &quot;Conditions&quot;, 
+                     values=c(&quot;Normal&quot; = &quot;#FF6600&quot;, 
+                              &quot;High Death Rate&quot; = &quot;#999900&quot;, 
+                              &quot;Low Infection Rate&quot; = &quot;#33CC33&quot;,
+                              &quot;Longer Recovery Days&quot; = &quot;#3399FF&quot;, 
+                              &quot;Low Contact Numbers&quot; = &quot;#FF33CC&quot;)) +
+  ggtitle(&quot;Total Death&quot;)
+
+
+p3 &lt;- ggplot(d1, aes(x=days, y=N_Immunity)) + 
+  geom_line(aes(y=N_Immunity, color = &quot;Normal&quot;)) + 
+  geom_line(aes(y=d2$N_Immunity, color = &quot;High Death Rate&quot;)) +
+  geom_line(aes(y=d3$N_Immunity, color = &quot;Low Infection Rate&quot;)) +
+  geom_line(aes(y=d4$N_Immunity, color = &quot;Longer Recovery Days&quot;)) +
+  geom_line(aes(y=d5$N_Immunity, color = &quot;Low Contact Numbers&quot;)) +
+  scale_color_manual(name = &quot;Conditions&quot;, 
+                     values=c(&quot;Normal&quot; = &quot;#FF6600&quot;, 
+                              &quot;High Death Rate&quot; = &quot;#999900&quot;, 
+                              &quot;Low Infection Rate&quot; = &quot;#33CC33&quot;,
+                              &quot;Longer Recovery Days&quot; = &quot;#3399FF&quot;, 
+                              &quot;Low Contact Numbers&quot; = &quot;#FF33CC&quot;)) +
+  ggtitle(&quot;Total Recovery&quot;)
+
+
+p4 &lt;- ggplot(d1, aes(x=days, y=N_New_Infected)) + 
+  geom_line(aes(y=N_New_Infected, color = &quot;Normal&quot;)) + 
+  geom_line(aes(y=d2$N_New_Infected, color = &quot;High Death Rate&quot;)) +
+  geom_line(aes(y=d3$N_New_Infected, color = &quot;Low Infection Rate&quot;)) +
+  geom_line(aes(y=d4$N_New_Infected, color = &quot;Longer Recovery Days&quot;)) +
+  geom_line(aes(y=d5$N_New_Infected, color = &quot;Low Contact Numbers&quot;)) +
+  scale_color_manual(name = &quot;Conditions&quot;, 
+                     values=c(&quot;Normal&quot; = &quot;#FF6600&quot;, 
+                              &quot;High Death Rate&quot; = &quot;#999900&quot;, 
+                              &quot;Low Infection Rate&quot; = &quot;#33CC33&quot;,
+                              &quot;Longer Recovery Days&quot; = &quot;#3399FF&quot;, 
+                              &quot;Low Contact Numbers&quot; = &quot;#FF33CC&quot;)) +
+  ggtitle(&quot;New Infections&quot;)
+
+p5 &lt;- ggplot(d1, aes(x=days, y=N_New_Death)) + 
+  geom_line(aes(y=N_New_Death, color = &quot;Normal&quot;)) + 
+  geom_line(aes(y=d2$N_New_Death, color = &quot;High Death Rate&quot;)) +
+  geom_line(aes(y=d3$N_New_Death, color = &quot;Low Infection Rate&quot;)) +
+  geom_line(aes(y=d4$N_New_Death, color = &quot;Longer Recovery Days&quot;)) +
+  geom_line(aes(y=d5$N_New_Death, color = &quot;Low Contact Numbers&quot;)) +
+  scale_color_manual(name = &quot;Conditions&quot;, 
+                     values=c(&quot;Normal&quot; = &quot;#FF6600&quot;, 
+                              &quot;High Death Rate&quot; = &quot;#999900&quot;, 
+                              &quot;Low Infection Rate&quot; = &quot;#33CC33&quot;,
+                              &quot;Longer Recovery Days&quot; = &quot;#3399FF&quot;, 
+                              &quot;Low Contact Numbers&quot; = &quot;#FF33CC&quot;)) +
+  ggtitle(&quot;New Death&quot;)
+
+p6 &lt;- ggplot(d1, aes(x=days, y=N_New_Immunity)) + 
+  geom_line(aes(y=N_New_Immunity, color = &quot;Normal&quot;)) + 
+  geom_line(aes(y=d2$N_New_Immunity, color = &quot;High Death Rate&quot;)) +
+  geom_line(aes(y=d3$N_New_Immunity, color = &quot;Low Infection Rate&quot;)) +
+  geom_line(aes(y=d4$N_New_Immunity, color = &quot;Longer Recovery Days&quot;)) +
+  geom_line(aes(y=d5$N_New_Immunity, color = &quot;Low Contact Numbers&quot;)) +
+  scale_color_manual(name = &quot;Conditions&quot;, 
+                     values=c(&quot;Normal&quot; = &quot;#FF6600&quot;, 
+                              &quot;High Death Rate&quot; = &quot;#999900&quot;, 
+                              &quot;Low Infection Rate&quot; = &quot;#33CC33&quot;,
+                              &quot;Longer Recovery Days&quot; = &quot;#3399FF&quot;, 
+                              &quot;Low Contact Numbers&quot; = &quot;#FF33CC&quot;)) +
+  ggtitle(&quot;New Recovery&quot;)
+
+multiplot(p1, p4, p2, p5, p3, p6, cols=3)</code></pre>
+<p><img src="/blogs/Epidemic%20Simulation_files/figure-html/unnamed-chunk-17-1.png" width="1440" style="display: block; margin: auto;" /></p>
+
+                        </div>
+                    </section>
+            <!-- Disqus Inject -->
+                
+            </div>
+            
+        <!-- Footer -->
+            
+                <!-- Footer -->
+    <footer id="footer">
+        <div class="inner">
+            <ul class="icons">
+                
+                    <li><a href="https://www.twitter.com" class="icon alt fa-twitter" target="_blank"><span class="label">Twitter</span></a></li>
+                
+                    <li><a href="https://www.facebook.com" class="icon alt fa-facebook" target="_blank"><span class="label">Facebook</span></a></li>
+                
+                    <li><a href="https://www.instagram.com" class="icon alt fa-instagram" target="_blank"><span class="label">Instagram</span></a></li>
+                
+                    <li><a href="https://github.com/LiamCheung0128" class="icon alt fa-github" target="_blank"><span class="label">GitHub</span></a></li>
+                
+                    <li><a href="https://www.linkedin.com/" class="icon alt fa-linkedin" target="_blank"><span class="label">LinkedIn</span></a></li>
+                
+            </ul>
+            <ul class="copyright">
+                <li>&copy; Liam Cheung</li>
+                
+                <li>Design:  <a href="https://www.html5up.net">HTML5 UP</a></li>
+                
+            </ul>
+        </div>
+    </footer>
+
+            
+        </div>
+
+    <!-- Scripts -->
+        <!-- Scripts -->
+    <!-- jQuery -->
+    <script src="https://liamcheung.netlify.app/js/jquery.min.js"></script>
+    <script src="https://liamcheung.netlify.app/js/jquery.scrolly.min.js"></script>
+    <script src="https://liamcheung.netlify.app/js/jquery.scrollex.min.js"></script>
+    <script src="https://liamcheung.netlify.app/js/skel.min.js"></script>
+    <script src="https://liamcheung.netlify.app/js/util.js"></script>
+
+    
+
+    <!-- Main JS -->
+    <script src="https://liamcheung.netlify.app/js/main.js"></script>
+
+    
+
+    
+
+    </body>
+</html>

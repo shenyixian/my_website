@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Portfolio website for Liam Cheung</title>
+    <link>https://liamcheung.netlify.app/</link>
+    <description>Recent content on Portfolio website for Liam Cheung</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Tue, 01 Dec 2020 21:13:14 -0500</lastBuildDate><atom:link href="https://liamcheung.netlify.app/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Hello R Markdown</title>
+      <link>https://liamcheung.netlify.app/post/2020-12-01-r-rmarkdown/</link>
+      <pubDate>Tue, 01 Dec 2020 21:13:14 -0500</pubDate>
+      
+      <guid>https://liamcheung.netlify.app/post/2020-12-01-r-rmarkdown/</guid>
+      <description>R MarkdownThis is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see http://rmarkdown.rstudio.com.
+You can embed an R code chunk like this:
+summary(cars)## speed dist ## Min. : 4.0 Min. : 2.00 ## 1st Qu.:12.0 1st Qu.: 26.00 ## Median :15.0 Median : 36.00 ## Mean :15.4 Mean : 42.</description>
+    </item>
+    
+    <item>
+      <title>About Me</title>
+      <link>https://liamcheung.netlify.app/blogs/aboutme/</link>
+      <pubDate>Tue, 31 Oct 2017 22:26:09 -0500</pubDate>
+      
+      <guid>https://liamcheung.netlify.app/blogs/aboutme/</guid>
+      <description>About MeHi, my name is Liam Cheung! I grew up in Singapore and then I moved to Sydney, Australia.
+I settled in Melbourne, a city known for its coffee and cultural references.
+Before LBS, I studied Accounting and Finance at Melbourne University. I am a professional Violaplayer, and I was lucky enough to have survived the Christchurch earthquake in New Zealand back in2011.
+I was an apprentice at Adelaide Symphony Orchestra, where I was promoted to guest Violinistafterwards.</description>
+    </item>
+    
+    <item>
+      <title>Analysis of movies- IMDB dataset</title>
+      <link>https://liamcheung.netlify.app/blogs/proj3/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://liamcheung.netlify.app/blogs/proj3/</guid>
+      <description>Analysis of movies- IMDB datasetWe will look at a subset sample of movies, taken from the Kaggle IMDB 5000 movie dataset
+movies &amp;lt;-read_csv(here::here(&amp;quot;data&amp;quot;,&amp;quot;movies.csv&amp;quot;)) glimpse(movies)## Rows: 2,961## Columns: 11## $ title &amp;lt;chr&amp;gt; &amp;quot;Avatar&amp;quot;, &amp;quot;Titanic&amp;quot;, &amp;quot;Jurassic World&amp;quot;, &amp;quot;The Avenge~## $ genre &amp;lt;chr&amp;gt; &amp;quot;Action&amp;quot;, &amp;quot;Drama&amp;quot;, &amp;quot;Action&amp;quot;, &amp;quot;Action&amp;quot;, &amp;quot;Action&amp;quot;, &amp;quot;~## $ director &amp;lt;chr&amp;gt; &amp;quot;James Cameron&amp;quot;, &amp;quot;James Cameron&amp;quot;, &amp;quot;Colin Trevorrow~## $ year &amp;lt;dbl&amp;gt; 2009, 1997, 2015, 2012, 2008, 1999, 1977, 2015, 20~## $ duration &amp;lt;dbl&amp;gt; 178, 194, 124, 173, 152, 136, 125, 141, 164, 93, 1~## $ gross &amp;lt;dbl&amp;gt; 7.</description>
+    </item>
+    
+    <item>
+      <title>Contact Me</title>
+      <link>https://liamcheung.netlify.app/blogs/contactme/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://liamcheung.netlify.app/blogs/contactme/</guid>
+      <description>Email Melcheung.mfa2022@london.edu
+Call/Text Me+44 7908569599
+</description>
+    </item>
+    
+    <item>
+      <title>Epidemic Simulation</title>
+      <link>https://liamcheung.netlify.app/blogs/proj1/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://liamcheung.netlify.app/blogs/proj1/</guid>
+      <description>Simple code to simulate COVID-19 infection in the society.
+Eliminate the exponential notation of the integer.
+options(scipen = 10)Number of citizens
+N_population &amp;lt;- 1000Number of initial positive cases
+N_init &amp;lt;- 2Death rate and infection rate
+death_rate &amp;lt;- 0.002infection_rate &amp;lt;- 0.3Number of days to recover
+n_recover &amp;lt;- 10Constants (State of health)
+healthy &amp;lt;- 0infected &amp;lt;- 1dead &amp;lt;- 2Number of people encountered by the infected person in one day.</description>
+    </item>
+    
+    <item>
+      <title>GDP components over time and among countries</title>
+      <link>https://liamcheung.netlify.app/blogs/proj4/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://liamcheung.netlify.app/blogs/proj4/</guid>
+      <description>At the risk of oversimplifying things, the main components of gross domestic product, GDP are personal consumption (C), business investment (I), government spending (G) and net exports (exports - imports). You can read more about GDP and the different approaches in calculating at the Wikipedia GDP page.
+The GDP data we will look at is from the United Nations’ National Accounts Main Aggregates Database, which contains estimates of total GDP and its components for all countries from 1970 to today.</description>
+    </item>
+    
+    <item>
+      <title>Youth Risk Behavior Surveillance</title>
+      <link>https://liamcheung.netlify.app/blogs/proj2/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://liamcheung.netlify.app/blogs/proj2/</guid>
+      <description>Every two years, the Centers for Disease Control and Prevention conduct the Youth Risk Behavior Surveillance System (YRBSS) survey, where it takes data from high schoolers (9th through 12th grade), to analyze health patterns. You will work with a selected group of variables from a random sample of observations during one of the years the YRBSS was conducted.
+Load the dataThis data is part of the openintro textbook and we can load and inspect it.</description>
+    </item>
+    
+  </channel>
+</rss>

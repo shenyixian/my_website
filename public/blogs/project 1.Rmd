@@ -1,0 +1,254 @@
+---
+categories:
+- ""
+- ""
+title: "project 1"
+output: html_document
+slug: proj1
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(ggplot2)
+
+# default figure size
+knitr::opts_chunk$set(
+  fig.width=15, 
+  fig.height=5,
+  fig.align = "center"
+)
+```
+
+
+
+```{r}
+options(scipen = 10)
+
+# Number of citizens
+N_population <- 1000
+# Number of initial positive cases
+N_init <- 2
+# Death Rate
+death_rate <- 0.002
+infection_rate <- 0.3
+# Number of days to recover
+n_recover <- 10
+# Constants (State of health)
+healthy <- 0
+infected <- 1
+dead <- 2
+# Number of people encountered by the infected person in one day.(A number randomly selected from 0 to N_encountered)
+N_encountered <- 20
+# Immunity Coefficient
+immunity_coef <- 0.3
+```
+
+```{r}
+sim <- function(death_rate=0.002, infection_rate=0.3, n_recover=10, N_encountered=20){
+  # Construct one r data frame storing id, state, duration, immunity.
+  id <- seq(1,N_population,1)
+  state <- rep(0,N_population)
+  duration <- rep(0,N_population)
+  immunity <- rep(1,N_population)
+  data <- data.frame(id, state, duration, immunity)
+  # Initialization
+  id_init <- ceiling(runif(N_init,min=0,max=N_population))
+  data[id_init,]$state <- infected
+  # vectors storing number of infected person and deaths
+  N_Infected <- c()
+  N_New_Infected <- c()
+  N_Death <- c()
+  N_New_Death <- c()
+  N_Immunity <- c()
+  N_New_Immunity <- c()
+  for(i in 1:300){
+    # calculate number of infected person and deaths
+    n_infected <- sum(data$state == infected)
+    n_death <- sum(data$state == dead)
+    n_immunity <- sum(data$immunity == immunity_coef)
+    
+    # update duration
+    data[data$state == infected,3] = data[data$state == infected,3] + 1
+    
+    # update immunity
+    # data[data$state == infected,4] = immunity_coef
+    
+    # update death
+    death_id <- runif(n_infected,0,1) < death_rate
+    n_new_death <- sum(death_id)
+    data[data$state == infected,][death_id,2] <- dead
+    #print(death_id)
+    #data[death_id,2] <- dead
+    
+    # infect new citizens
+    N_meet <- floor(runif(1,0,N_encountered*n_infected))
+    meet_id <- unique(ceiling(runif(N_meet,min=0,max=N_population)))
+    # remove the dead
+    meet_id <- meet_id[data[meet_id,2] != dead]
+    # remove the currently infected
+    meet_id <- meet_id[data[meet_id,2] != infected]
+    # people with immunity
+    meet_id_1 <- meet_id[data[meet_id,4] == immunity_coef]
+    infected_id_1 <- meet_id[runif(length(meet_id_1),0,1) < infection_rate * immunity_coef]
+    # people without immunity
+    meet_id_2 <- meet_id[data[meet_id,4] == 1]
+    infected_id_2 <- meet_id[runif(length(meet_id_2),0,1) < infection_rate]
+    # total
+    infected_id <- c(infected_id_1,infected_id_2)
+    n_new_infected <- length(infected_id)
+    
+    # update new infected citizens
+    data[infected_id,2] <- infected
+    
+    # patients recovery
+    n_new_immunity <- nrow(data[data$duration >= n_recover,])
+    data[data$duration >= n_recover,2] <- healthy
+    data[data$duration >= n_recover,4] <- immunity_coef
+    data[data$duration >= n_recover,3] <- 0
+    
+    # display information
+    # print(sprintf(fmt = "Day: %3d; Total Infections: %6d; Toatl Deaths: %6d; Total Recovered:%6d; New Infections: %5d; New Deaths: %5d; New Recovered: %5d", i, n_infected, n_death, n_immunity, n_new_infected, n_new_death, n_new_immunity))
+    
+    # Stopping Criterion
+    # if(n_infected == 0 | n_death == N_population){
+    #   print("Stopping criterion reached.")
+    #   break
+    # }
+    
+    # Append number of infected, death, and immunity
+    N_Infected <- append(N_Infected,n_infected)
+    N_Death <- append(N_Death,n_death)
+    N_Immunity <- append(N_Immunity,n_immunity)
+    
+    N_New_Infected <- append(N_New_Infected, n_new_infected)
+    N_New_Death <- append(N_New_Death, n_new_death)
+    N_New_Immunity <- append(N_New_Immunity, n_new_immunity)
+    
+  }
+  days <- seq(1,length(N_Infected))
+  d <- data.frame(days, N_Infected, N_Death, N_Immunity, N_New_Infected, N_New_Death, N_New_Immunity)
+  return(d)
+}
+
+d1 <- sim(death_rate=0.002, infection_rate=0.3, n_recover=10, N_encountered=20)
+d2 <- sim(death_rate=0.03, infection_rate=0.3, n_recover=10, N_encountered=20)
+d3 <- sim(death_rate=0.002, infection_rate=0.05, n_recover=10, N_encountered=20)
+d4 <- sim(death_rate=0.002, infection_rate=0.3, n_recover=20, N_encountered=20)
+d5 <- sim(death_rate=0.002, infection_rate=0.3, n_recover=10, N_encountered=2)
+
+
+multiplot <- function(..., plotlist=NULL, file, cols=1, layout=NULL) {
+  library(grid)
+  plots <- c(list(...), plotlist)
+  numPlots = length(plots)
+  if (is.null(layout)) {
+    layout <- matrix(seq(1, cols * ceiling(numPlots/cols)),
+                     ncol = cols, nrow = ceiling(numPlots/cols))
+  }
+  if (numPlots==1) {
+    print(plots[[1]])
+    
+  } else {
+    grid.newpage()
+    pushViewport(viewport(layout = grid.layout(nrow(layout), ncol(layout))))
+    for (i in 1:numPlots) {
+      matchidx <- as.data.frame(which(layout == i, arr.ind = TRUE))
+      print(plots[[i]], vp = viewport(layout.pos.row = matchidx$row,
+                                      layout.pos.col = matchidx$col))
+    }
+  }
+}
+
+
+p1 <- ggplot(d1, aes(x=days, y=N_Infected)) + 
+  geom_line(aes(y=N_Infected, color = "Normal")) + 
+  geom_line(aes(y=d2$N_Infected, color = "High Death Rate")) +
+  geom_line(aes(y=d3$N_Infected, color = "Low Infection Rate")) +
+  geom_line(aes(y=d4$N_Infected, color = "Longer Recovery Days")) +
+  geom_line(aes(y=d5$N_Infected, color = "Low Contact Numbers")) +
+  scale_color_manual(name = "Conditions", 
+                     values=c("Normal" = "#FF6600", 
+                              "High Death Rate" = "#999900", 
+                              "Low Infection Rate" = "#33CC33",
+                              "Longer Recovery Days" = "#3399FF", 
+                              "Low Contact Numbers" = "#FF33CC")) +
+  ggtitle("Total Infections")
+
+p2 <- ggplot(d1, aes(x=days, y=N_Death)) + 
+  geom_line(aes(y=N_Death, color = "Normal")) + 
+  geom_line(aes(y=d2$N_Death, color = "High Death Rate")) +
+  geom_line(aes(y=d3$N_Death, color = "Low Infection Rate")) +
+  geom_line(aes(y=d4$N_Death, color = "Longer Recovery Days")) +
+  geom_line(aes(y=d5$N_Death, color = "Low Contact Numbers")) +
+  scale_color_manual(name = "Conditions", 
+                     values=c("Normal" = "#FF6600", 
+                              "High Death Rate" = "#999900", 
+                              "Low Infection Rate" = "#33CC33",
+                              "Longer Recovery Days" = "#3399FF", 
+                              "Low Contact Numbers" = "#FF33CC")) +
+  ggtitle("Total Death")
+
+
+p3 <- ggplot(d1, aes(x=days, y=N_Immunity)) + 
+  geom_line(aes(y=N_Immunity, color = "Normal")) + 
+  geom_line(aes(y=d2$N_Immunity, color = "High Death Rate")) +
+  geom_line(aes(y=d3$N_Immunity, color = "Low Infection Rate")) +
+  geom_line(aes(y=d4$N_Immunity, color = "Longer Recovery Days")) +
+  geom_line(aes(y=d5$N_Immunity, color = "Low Contact Numbers")) +
+  scale_color_manual(name = "Conditions", 
+                     values=c("Normal" = "#FF6600", 
+                              "High Death Rate" = "#999900", 
+                              "Low Infection Rate" = "#33CC33",
+                              "Longer Recovery Days" = "#3399FF", 
+                              "Low Contact Numbers" = "#FF33CC")) +
+  ggtitle("Total Recovery")
+
+
+p4 <- ggplot(d1, aes(x=days, y=N_New_Infected)) + 
+  geom_line(aes(y=N_New_Infected, color = "Normal")) + 
+  geom_line(aes(y=d2$N_New_Infected, color = "High Death Rate")) +
+  geom_line(aes(y=d3$N_New_Infected, color = "Low Infection Rate")) +
+  geom_line(aes(y=d4$N_New_Infected, color = "Longer Recovery Days")) +
+  geom_line(aes(y=d5$N_New_Infected, color = "Low Contact Numbers")) +
+  scale_color_manual(name = "Conditions", 
+                     values=c("Normal" = "#FF6600", 
+                              "High Death Rate" = "#999900", 
+                              "Low Infection Rate" = "#33CC33",
+                              "Longer Recovery Days" = "#3399FF", 
+                              "Low Contact Numbers" = "#FF33CC")) +
+  ggtitle("New Infections")
+
+p5 <- ggplot(d1, aes(x=days, y=N_New_Death)) + 
+  geom_line(aes(y=N_New_Death, color = "Normal")) + 
+  geom_line(aes(y=d2$N_New_Death, color = "High Death Rate")) +
+  geom_line(aes(y=d3$N_New_Death, color = "Low Infection Rate")) +
+  geom_line(aes(y=d4$N_New_Death, color = "Longer Recovery Days")) +
+  geom_line(aes(y=d5$N_New_Death, color = "Low Contact Numbers")) +
+  scale_color_manual(name = "Conditions", 
+                     values=c("Normal" = "#FF6600", 
+                              "High Death Rate" = "#999900", 
+                              "Low Infection Rate" = "#33CC33",
+                              "Longer Recovery Days" = "#3399FF", 
+                              "Low Contact Numbers" = "#FF33CC")) +
+  ggtitle("New Death")
+
+p6 <- ggplot(d1, aes(x=days, y=N_New_Immunity)) + 
+  geom_line(aes(y=N_New_Immunity, color = "Normal")) + 
+  geom_line(aes(y=d2$N_New_Immunity, color = "High Death Rate")) +
+  geom_line(aes(y=d3$N_New_Immunity, color = "Low Infection Rate")) +
+  geom_line(aes(y=d4$N_New_Immunity, color = "Longer Recovery Days")) +
+  geom_line(aes(y=d5$N_New_Immunity, color = "Low Contact Numbers")) +
+  scale_color_manual(name = "Conditions", 
+                     values=c("Normal" = "#FF6600", 
+                              "High Death Rate" = "#999900", 
+                              "Low Infection Rate" = "#33CC33",
+                              "Longer Recovery Days" = "#3399FF", 
+                              "Low Contact Numbers" = "#FF33CC")) +
+  ggtitle("New Recovery")
+
+
+
+multiplot(p1, p4, p2, p5, p3, p6, cols=3)
+
+
+```
